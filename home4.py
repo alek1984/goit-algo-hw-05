@@ -1,13 +1,15 @@
+import sys
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except KeyError:
-            return "This contact does not exist."
+            return "Contact not found."
         except ValueError:
             return "Give me name and phone please."
         except IndexError:
-            return "Enter the argument for the command"
+            return "Enter user name."
     return inner
 
 def parse_input(user_input):
@@ -15,9 +17,6 @@ def parse_input(user_input):
     command = parts[0].lower() if parts else ""
     args = parts[1:]
     return command, args
-
-def hello(*args):
-    return "Hello! How can I help you?"
 
 @input_error
 def add_contact(args, contacts):
@@ -32,7 +31,7 @@ def change_contact(args, contacts):
         contacts[name] = phone
         return "Contact updated."
     else:
-        return "This contact does not exist."
+        return "Contact not found."
 
 @input_error
 def get_phone(args, contacts):
@@ -40,7 +39,7 @@ def get_phone(args, contacts):
     return contacts[name]
 
 def show_all(contacts):
-    return "\n".join([f"{name}: {phone}" for name, phone in contacts.items()])
+    return "\n".join(f"{name}: {phone}" for name, phone in contacts.items()) if contacts else "No contacts saved."
 
 def main():
     contacts = {}
@@ -50,22 +49,23 @@ def main():
         
         if command in ["exit", "close"]:
             print("Goodbye!")
-            break
-        elif command == "hello":
-            print(hello())
-        elif command == "add" and len(args) == 2:
+            sys.exit()
+        elif command == "add":
             print(add_contact(args, contacts))
-        elif command == "change" and len(args) == 2:
+        elif command == "change":
             print(change_contact(args, contacts))
-        elif command == "phone" and len(args) == 1:
+        elif command == "phone":
             print(get_phone(args, contacts))
         elif command == "all":
             print(show_all(contacts))
+        elif command == "hello":
+            print("How can I help you?")
         else:
             print("Invalid command.")
 
 if __name__ == "__main__":
     main()
+
 
  
  
